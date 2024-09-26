@@ -22,7 +22,7 @@ fastify.get("/", async function handler(request, reply) {
 });
 
 // Run the server!
-fastify.listen({ port: 3001 }, (err) => {
+fastify.listen({}, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
