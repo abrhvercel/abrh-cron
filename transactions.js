@@ -47,6 +47,41 @@ export const checkTransactions = async () => {
         await sendEmailMessage(emailData);
       }
 
+        await Promise.all(
+          data.notify.map((item) =>
+            client.collection("data").update(item.id, { paymentAlertSent: true })
+          )
+        );
+    }
+
+    if (data.cancel.length) {
+      // LOG("ENVIANDO NOTIFICAÇÕES VIA WHATSAPP");
+
+      // const whatsappData = data.notify
+      //   .filter((item) => !!item.phone)
+      //   .map((item) => ({
+      //     number: `+55${item.phone.replace(/\D/g, "")}`,
+      //     text: "Você possui um pagamento pendente!",
+      //   }));
+
+      // LOG(`WHATSAPP -> ${JSON.stringify(whatsappData)}`);
+      // await sendWhatsappMessage(whatsappData);
+
+      // LOG("ENVIANDO NOTIFICAÇÕES VIA EMAIL");
+
+      // const emailData = data.notify
+      //   .filter((item) => !!item.customerEmail)
+      //   .map((item) => ({
+      //     emailList: [item.customerEmail],
+      //     subject: "Atenção",
+      //     text: "Você possui um pagamento pendente!",
+      //   }));
+
+      // LOG(`EMAIL -> ${JSON.stringify(emailData)}`);
+      // if (emailData.length) {
+      //   await sendEmailMessage(emailData);
+      // }
+
       //   await Promise.all(
       //     data.notify.map((item) =>
       //       client.collection("data").update(item.id, { paymentAlertSent: true })
