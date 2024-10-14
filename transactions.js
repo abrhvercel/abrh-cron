@@ -3,8 +3,46 @@ import pagarme from "./pagarme.js";
 import { sendWhatsappMessage } from "./whatsapp.js";
 import { sendEmailMessage } from "./email.js";
 import { LOG } from "./log.js";
+import { sleep } from "./sleep.js";
+
+const sendNotification = async (
+  phones,
+  phoneMessages,
+  emails,
+  emailMessages
+) => {
+  LOG("ENVIANDO NOTIFICAÇÕES VIA WHATSAPP");
+
+  const whatsappData = phones.map((item, index) => ({
+    number: `+55${item.phone.replace(/\D/g, "")}`,
+    text: phoneMessages[index],
+  }));
+
+  LOG(`WHATSAPP -> ${JSON.stringify(whatsappData)}`);
+  await sendWhatsappMessage(whatsappData);
+
+  LOG("ENVIANDO NOTIFICAÇÕES VIA EMAIL");
+
+  const emailData = emails.map((item, index) => ({
+    emailList: [item.customerEmail],
+    subject: "Atenção",
+    text: emailMessages[index],
+  }));
+
+  LOG(`EMAIL -> ${JSON.stringify(emailData)}`);
+  if (emailData.length) {
+    await sendEmailMessage(emailData);
+  }
+
+  return;
+};
 
 export const checkTransactions = async () => {
+  LOG("----------------------------------------", false);
+  LOG("----------------------------------------", false);
+  LOG("----------------------------------------", false);
+  LOG("INICIANDO PROCESSO");
+  LOG("----------------------------------------", false);
   try {
     const client = await pocketbaseClient.getClient(
       "admin@email.com",
@@ -15,83 +53,63 @@ export const checkTransactions = async () => {
       filter: `(paymentStatus = 'PENDENTE' || paymentStatus = 'Pendente' || paymentStatus = 'pendente') && client != ""`,
     });
 
-    // return list;
-
     const data = await pagarme.checkPayments(list);
 
     if (data.notify.length) {
-      LOG("ENVIANDO NOTIFICAÇÕES VIA WHATSAPP");
+      const phones = data.notify.filter((item) => !!item.phone);
+      const emails = data.notify.filter((item) => !!item.customerEmail);
 
-      const whatsappData = data.notify
-        .filter((item) => !!item.phone)
-        .map((item) => ({
-          number: `+55${item.phone.replace(/\D/g, "")}`,
-          text: "Você possui um pagamento pendente!",
-        }));
+      LOG("ENVIANDO NOTIFICAÇÕES DE ALERTA DE PAGAMENTO");
 
-      LOG(`WHATSAPP -> ${JSON.stringify(whatsappData)}`);
-      await sendWhatsappMessage(whatsappData);
+      await sendNotification(
+        phones,
+        phones.map((p) => "Você possui um pagamento pendente!"),
+        emails,
+        emails.map((p) => "Você possui um pagamento pendente!")
+      );
 
-      LOG("ENVIANDO NOTIFICAÇÕES VIA EMAIL");
-
-      const emailData = data.notify
-        .filter((item) => !!item.customerEmail)
-        .map((item) => ({
-          emailList: [item.customerEmail],
-          subject: "Atenção",
-          text: "Você possui um pagamento pendente!",
-        }));
-
-      LOG(`EMAIL -> ${JSON.stringify(emailData)}`);
-      if (emailData.length) {
-        await sendEmailMessage(emailData);
-      }
-
-        await Promise.all(
-          data.notify.map((item) =>
-            client.collection("data").update(item.id, { paymentAlertSent: true })
-          )
-        );
+      await Promise.all(
+        data.notify.map((item) =>
+          client.collection("data").update(item.id, { paymentAlertSent: true })
+        )
+      );
     }
+
+    await sleep(2000);
 
     if (data.cancel.length) {
-      // LOG("ENVIANDO NOTIFICAÇÕES VIA WHATSAPP");
+      const phones = data.cancel.filter((item) => !!item.phone);
+      const emails = data.cancel.filter((item) => !!item.customerEmail);
 
-      // const whatsappData = data.notify
-      //   .filter((item) => !!item.phone)
-      //   .map((item) => ({
-      //     number: `+55${item.phone.replace(/\D/g, "")}`,
-      //     text: "Você possui um pagamento pendente!",
-      //   }));
+      LOG("ENVIANDO NOTIFICAÇÕES DE CANCELAMENTO DE PAGAMENTO");
 
-      // LOG(`WHATSAPP -> ${JSON.stringify(whatsappData)}`);
-      // await sendWhatsappMessage(whatsappData);
+      await sendNotification(
+        phones,
+        phones.map((p) => "Seu pagamento foi cancelado!"),
+        emails,
+        emails.map((p) => "Seu pagamento foi cancelado!")
+      );
 
-      // LOG("ENVIANDO NOTIFICAÇÕES VIA EMAIL");
-
-      // const emailData = data.notify
-      //   .filter((item) => !!item.customerEmail)
-      //   .map((item) => ({
-      //     emailList: [item.customerEmail],
-      //     subject: "Atenção",
-      //     text: "Você possui um pagamento pendente!",
-      //   }));
-
-      // LOG(`EMAIL -> ${JSON.stringify(emailData)}`);
-      // if (emailData.length) {
-      //   await sendEmailMessage(emailData);
-      // }
-
-      //   await Promise.all(
-      //     data.notify.map((item) =>
-      //       client.collection("data").update(item.id, { paymentAlertSent: true })
-      //     )
-      //   );
+      await Promise.all(
+        data.cancel.map((item) =>
+          client.collection("data").update(item.id, { paymentCancelled: true })
+        )
+      );
     }
 
+    LOG("----------------------------------------", false);
+    LOG("----------------------------------------", false);
+    LOG("----------------------------------------", false);
+    LOG("ENCERRANDO PROCESSO");
+    LOG("----------------------------------------", false);
     return data;
   } catch (error) {
     LOG(error);
+    LOG("----------------------------------------", false);
+    LOG("----------------------------------------", false);
+    LOG("----------------------------------------", false);
+    LOG("ENCERRANDO PROCESSO");
+    LOG("----------------------------------------", false);
     return { error };
   }
 };

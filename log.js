@@ -1,4 +1,7 @@
-export const LOG = (data) => {
-  console.log(`${new Date().toISOString()}`);
+export const LOG = (data, showDate = true) => {
+  if (showDate) {
+    console.log(`${new Date().toISOString()}`);
+  }
+
   console.log(`${data}`);
 };

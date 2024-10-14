@@ -10,7 +10,7 @@ const getClient = async (username, password) => {
       .authWithPassword(username, password);
     return client;
   } catch (error) {
-    console.log(error.response)
+    console.error(error.response)
     return false;
   }
 };

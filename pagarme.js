@@ -1,4 +1,5 @@
 import { LOG } from "./log.js";
+import { sleep } from "./sleep.js";
 
 const NEXT_PAGARME_API_URL = "https://api.pagar.me/1";
 const NEXT_PAGARME_API_KEY = "ak_live_GWwjKpMoeka6gvC1AhXQmAZyVY8LR1";
@@ -175,14 +176,6 @@ const checkPayments = async (list) => {
 
 const pagarmeService = {
   checkPayments,
-};
-
-const sleep = async (ms) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(true);
-    }, ms);
-  });
 };
 
 export default pagarmeService;

@@ -43,14 +43,12 @@ export const sendWhatsappMessage = async (messages) => {
         })
       );
 
-      console.log(response);
-
       return "";
     } else {
       return "Erro ao enviar mensagens via whatsapp";
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return "Erro ao enviar mensagens via whatsapp";
   }
 };
