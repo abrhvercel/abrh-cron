@@ -2,7 +2,7 @@ import { LOG } from "./log.js";
 import { sleep } from "./sleep.js";
 
 const NEXT_PAGARME_API_URL = "https://api.pagar.me/1";
-const NEXT_PAGARME_API_KEY = "ak_live_GWwjKpMoeka6gvC1AhXQmAZyVY8LR1";
+const NEXT_PAGARME_API_KEY = "ak_live_jXyd81J9kmLMPZhVJuZN6lo7RZrKa3";
 
 const getTransactions = async (extra) => {
   try {

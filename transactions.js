@@ -4,6 +4,12 @@ import { sendWhatsappMessage } from "./whatsapp.js";
 import { sendEmailMessage } from "./email.js";
 import { LOG } from "./log.js";
 import { sleep } from "./sleep.js";
+import {
+  getEmailCancelMessage,
+  getEmailNotifyMessage,
+  getWhatsappCancelMessage,
+  getWhatsappNotifyMessage,
+} from "./message.js";
 
 const sendNotification = async (
   phones,
@@ -25,8 +31,8 @@ const sendNotification = async (
 
   const emailData = emails.map((item, index) => ({
     emailList: [item.customerEmail],
-    subject: "Atenção",
-    text: emailMessages[index],
+    subject: emailMessages[index].subject,
+    text: emailMessages[index].text,
   }));
 
   LOG(`EMAIL -> ${JSON.stringify(emailData)}`);
@@ -50,8 +56,10 @@ export const checkTransactions = async () => {
     );
 
     const list = await client.collection("data").getFullList({
-      filter: `(paymentStatus = 'PENDENTE' || paymentStatus = 'Pendente' || paymentStatus = 'pendente') && client != ""`,
+      filter: `(paymentStatus = 'PENDENTE' || paymentStatus = 'Pendente' || paymentStatus = 'pendente') && client != "" && empenho != "S"`,
     });
+
+    LOG(`Nº DE PROCESSOS PARA VERIFICAR: ${list.length}`);
 
     const data = await pagarme.checkPayments(list);
 
@@ -63,9 +71,12 @@ export const checkTransactions = async () => {
 
       await sendNotification(
         phones,
-        phones.map((p) => "Você possui um pagamento pendente!"),
+        phones.map((p) => getWhatsappNotifyMessage(p)),
         emails,
-        emails.map((p) => "Você possui um pagamento pendente!")
+        emails.map((p) => ({
+          subject: "Lembrete de Pagamento - Inscrição para o Evento",
+          text: getEmailNotifyMessage(p),
+        }))
       );
 
       await Promise.all(
@@ -85,9 +96,12 @@ export const checkTransactions = async () => {
 
       await sendNotification(
         phones,
-        phones.map((p) => "Seu pagamento foi cancelado!"),
+        phones.map((p) => getWhatsappCancelMessage(p)),
         emails,
-        emails.map((p) => "Seu pagamento foi cancelado!")
+        emails.map((p) => ({
+          subject: "Lembrete de Pagamento - Inscrição para o Evento",
+          text: getEmailCancelMessage(p),
+        }))
       );
 
       await Promise.all(
