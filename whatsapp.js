@@ -1,3 +1,4 @@
+import { LOG } from "./log.js";
 import pocketbaseClient from "./pocketbase.js";
 
 export const sendWhatsappMessage = async (messages) => {
@@ -14,6 +15,10 @@ export const sendWhatsappMessage = async (messages) => {
     const WHATSAPP_INSTANCE = settings.find(
       (s) => s.field === "WHATSAPP_INSTANCE"
     );
+
+    LOG(`WHATSAPP_URL -> ${WHATSAPP_URL.value}`);
+    LOG(`WHATSAPP_TOKEN -> ${WHATSAPP_TOKEN.value}`, false);
+    LOG(`WHATSAPP_INSTANCE -> ${WHATSAPP_INSTANCE.value}`, false);
 
     if (WHATSAPP_URL && WHATSAPP_TOKEN && WHATSAPP_INSTANCE) {
       const url = `${WHATSAPP_URL.value}/message/sendText/${WHATSAPP_INSTANCE.value}`;
@@ -42,6 +47,8 @@ export const sendWhatsappMessage = async (messages) => {
           return fetch(url, config);
         })
       );
+
+      LOG(JSON.stringify(response));
 
       return "";
     } else {

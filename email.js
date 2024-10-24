@@ -31,7 +31,11 @@ export const sendEmailMessage = (messages) => {
           from: EMAIL_USER.value,
           to: m.emailList,
           subject: m.subject,
-          text: m.text,
+          html: m.text,
+          reply_to: {
+            email: "john@mailersend.com",
+            name: "MailerSend",
+          },
         };
         return sendEmail(transporterConfig, mailOptions);
       });

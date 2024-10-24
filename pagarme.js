@@ -64,40 +64,40 @@ const checkPayment = async (data) => {
   });
 
   if (data.empenho === "S") {
-    return error("O processo é do tipo Empenho");
+    return error(`[${data.process}]: O processo é do tipo Empenho`);
   }
 
   if (data.paymentStatus.toUpperCase() !== "PENDENTE") {
-    return error("O pagamento não está pendente");
+    return error(`[${data.process}]: O pagamento não está pendente`);
   }
 
   if (!data.buyDate) {
-    return error("O processo não possui data de compra");
+    return error(`[${data.process}]: O processo não possui data de compra`);
   }
 
   const now = new Date();
   const buyData = new Date(data.buyDate);
 
   if (buyData.toString() === "Invalid Date") {
-    return error("O processo possui uma data de compra inválida");
+    return error(`[${data.process}]: O processo possui uma data de compra inválida`);
   }
 
   const difference = Math.abs(differenceInDays(buyData, now));
 
   if (difference > 3) {
     if (difference < 10 && data.paymentAlertSent) {
-      return success("Alerta de pagamento já enviado");
+      return success(`[${data.process}]: Alerta de pagamento já enviado`);
     }
 
     if (difference > 10 && data.paymentCancelled) {
-      return success("Pagamento cancelado");
+      return success(`[${data.process}]: Pagamento cancelado`);
     }
 
     // BUSCANDO CLIENTE
     const customers = await getCustomers(data.client);
 
     if (customers.length === 0 || !customers) {
-      return error(`Cliente não encontrado -> ${data.client}`);
+      return error(`[${data.process}]: Cliente não encontrado -> ${data.client}`);
     }
 
     const customer = customers.find((c) =>
@@ -106,7 +106,7 @@ const checkPayment = async (data) => {
 
     if (!customer) {
       return error(
-        `Não consta esse processo [${data.process}] para o cliente ${data.client}`
+        `[${data.process}]: Não consta esse processo para o cliente ${data.client}`
       );
     }
 
@@ -120,22 +120,27 @@ const checkPayment = async (data) => {
     if (transaction) {
       if (transaction.status === "waiting_payment") {
         if (difference < 10) {
+          // Verificando se a transação possui boleto
+          if (transaction.boleto_url) {
+            data.boleto = transaction.boleto_url;
+          }
+
           // Enviar notificação com mensagem de cobrança
-          return success("Enviar notificação com mensagem de cobrança", true);
+          return success(`[${data.process}]: Enviar notificação com mensagem de cobrança`, true);
         } else {
           // Cancelar transação e enviar mensagem
-          return success("Cancelar transação e enviar mensagem", false, true);
+          return success(`[${data.process}]: Cancelar transação e enviar mensagem`, false, true);
         }
       } else {
         return error(
-          `Transação não está pendente, status: ${transaction.status}`
+          `[${data.process}]: Transação não está pendente, status: ${transaction.status}`
         );
       }
     } else {
-      return error("Transação não encontrada");
+      return error(`[${data.process}]: Transação não encontrada`);
     }
   } else {
-    return success("Pagamento dentro do prazo");
+    return success(`[${data.process}]: Pagamento dentro do prazo`);
   }
 };
 

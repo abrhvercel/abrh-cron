@@ -24,7 +24,6 @@ const sendNotification = async (
     text: phoneMessages[index],
   }));
 
-  LOG(`WHATSAPP -> ${JSON.stringify(whatsappData)}`);
   await sendWhatsappMessage(whatsappData);
 
   LOG("ENVIANDO NOTIFICAÇÕES VIA EMAIL");
@@ -35,7 +34,6 @@ const sendNotification = async (
     text: emailMessages[index].text,
   }));
 
-  LOG(`EMAIL -> ${JSON.stringify(emailData)}`);
   if (emailData.length) {
     await sendEmailMessage(emailData);
   }
@@ -64,8 +62,8 @@ export const checkTransactions = async () => {
     const data = await pagarme.checkPayments(list);
 
     if (data.notify.length) {
-      const phones = data.notify.filter((item) => !!item.phone);
-      const emails = data.notify.filter((item) => !!item.customerEmail);
+      let phones = data.notify.filter((item) => !!item.phone);
+      let emails = data.notify.filter((item) => !!item.customerEmail);
 
       LOG("ENVIANDO NOTIFICAÇÕES DE ALERTA DE PAGAMENTO");
 
@@ -79,11 +77,11 @@ export const checkTransactions = async () => {
         }))
       );
 
-      await Promise.all(
-        data.notify.map((item) =>
-          client.collection("data").update(item.id, { paymentAlertSent: true })
-        )
-      );
+      // await Promise.all(
+      //   data.notify.map((item) =>
+      //     client.collection("data").update(item.id, { paymentAlertSent: true })
+      //   )
+      // );
     }
 
     await sleep(2000);
@@ -99,16 +97,16 @@ export const checkTransactions = async () => {
         phones.map((p) => getWhatsappCancelMessage(p)),
         emails,
         emails.map((p) => ({
-          subject: "Lembrete de Pagamento - Inscrição para o Evento",
+          subject: "Cancelamento da Inscrição",
           text: getEmailCancelMessage(p),
         }))
       );
 
-      await Promise.all(
-        data.cancel.map((item) =>
-          client.collection("data").update(item.id, { paymentCancelled: true })
-        )
-      );
+      // await Promise.all(
+      //   data.cancel.map((item) =>
+      //     client.collection("data").update(item.id, { paymentCancelled: true })
+      //   )
+      // );
     }
 
     LOG("----------------------------------------", false);
