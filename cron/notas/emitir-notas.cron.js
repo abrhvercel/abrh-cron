@@ -17,7 +17,7 @@ export const runEmitirNotas = async () => {
 
   const resultList = await dbClient
     .collection("data")
-    .getFullList({ filter: "nfseCronStatus = 'WAITING_CRON'" });
+    .getFullList({ filter: `nfseCronStatus = 'WAITING_CRON' && nfseCronAttempts < ${process.env.SPEDY_MAX_ATTEMPTS}` });
 
   logs.push(LOG(`Nº de processos: ${resultList.length}`));
 
@@ -33,9 +33,10 @@ export const runEmitirNotas = async () => {
     if (item.nfseId) {
       logs.push(LOG(`Nota já gerada para o processo: ${item.process}`));
     } else {
-      const nfse = await notafiscalService.postNFSe(item, settings);
+      const response = await notafiscalService.postNFSe(item, settings);
       await sleep(1000);
-      if (nfse) {
+      if (!response.error) {
+        const nfse = response.data;
         logs.push(LOG(`Nota gerada: ${nfse.id}`));
         await dbClient.collection("data").update(item.id, {
           nfseId: nfse.id,
@@ -44,6 +45,10 @@ export const runEmitirNotas = async () => {
         });
       } else {
         logs.push(LOG(`Erro ao gerar nota para o processo: ${item.process}`));
+        await dbClient.collection("data").update(item.id, {
+          nfseCronAttempts: item.nfseCronAttempts + 1,
+          nfseCronError: JSON.stringify(response.error)
+        });
       }
     }
   }

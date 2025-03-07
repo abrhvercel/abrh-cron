@@ -19,8 +19,6 @@ const fastify = Fastify({
 });
 
 fastify.get("/", async function handler(request, reply) {
-  // const response = await checkTransactions();
-  // await client.collection("test").create({ time: new Date().toString() });
   const response = await runNotas();
   reply.send(response);
 });
@@ -32,14 +30,8 @@ fastify.listen({ port: 3001, host: "0.0.0.0" }, (err) => {
   }
 });
 
-cron.schedule('* * * * *', async () =>  {
-  console.log('TESTE CRON -> ', new Date().toISOString())
+// TODO DIA as 08h e 16h
+cron.schedule('0 8,16 * * *', async () =>  {
+  const response = await runNotas();
+  console.log(response)
 });
-
-// cron.schedule('*/10 * * * *', async () =>  {
-//   const client = new PocketBase(POCKET_BASE_URL);
-//   await client
-//     .collection("users")
-//     .authWithPassword("admin@email.com", "Q!W@e3r4");
-//   await client.collection("test").create({ time: new Date().toString() });
-// });

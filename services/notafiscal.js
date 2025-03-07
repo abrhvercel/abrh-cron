@@ -1,4 +1,3 @@
-
 import fetchToCurl from "fetch-to-curl";
 import { LOG } from "../utils/log.js";
 
@@ -12,6 +11,9 @@ const notafiscalHeaders = () => {
 };
 
 const postNFSe = async (item, settings) => {
+  return {
+    error: { name: 'teste' },
+  };
   const body = {
     description: settings.description,
     federalServiceCode: settings.cnae,
@@ -26,7 +28,7 @@ const postNFSe = async (item, settings) => {
         street: item.address,
         city: {
           name: item.city,
-          state: item.un
+          state: item.un,
         },
         number: item.number,
         country: item.country,
@@ -38,23 +40,28 @@ const postNFSe = async (item, settings) => {
       invoiceAmount: item.purchaseValue,
     },
   };
-  
+
   const url = `${process.env.SPEDY_API_URL}/service-invoices`;
   const config = {
     ...notafiscalHeaders(),
     method: "POST",
     body: JSON.stringify(body),
   };
-  
+
   // return ""
 
   try {
     const response = await fetch(url, config);
     const data = await response.json();
-    return data;
+    return {
+      data,
+      error: false,
+    };
   } catch (error) {
     LOG(error);
-    return "";
+    return {
+      error,
+    };
   }
 };
 
