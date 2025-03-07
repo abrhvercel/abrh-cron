@@ -1,9 +1,9 @@
-import pocketbaseClient from "./pocketbase.js";
+import pocketbaseClient from "./db/pocketbase.js";
 import pagarme from "./pagarme.js";
 import { sendWhatsappMessage } from "./whatsapp.js";
 import { sendEmailMessage } from "./email.js";
-import { LOG } from "./log.js";
-import { sleep } from "./sleep.js";
+import { LOG } from "./utils/log.js";
+import { sleep } from "./utils/sleep.js";
 import {
   getEmailCancelMessage,
   getEmailNotifyMessage,

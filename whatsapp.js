@@ -1,5 +1,5 @@
-import { LOG } from "./log.js";
-import pocketbaseClient from "./pocketbase.js";
+import { LOG } from "./utils/log.js";
+import pocketbaseClient from "./db/pocketbase.js";
 
 export const sendWhatsappMessage = async (messages) => {
   try {

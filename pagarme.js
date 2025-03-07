@@ -1,5 +1,5 @@
-import { LOG } from "./log.js";
-import { sleep } from "./sleep.js";
+import { LOG } from "./utils/log.js";
+import { sleep } from "./utils/sleep.js";
 
 const NEXT_PAGARME_API_URL = "https://api.pagar.me/1";
 const NEXT_PAGARME_API_KEY = "ak_live_jXyd81J9kmLMPZhVJuZN6lo7RZrKa3";

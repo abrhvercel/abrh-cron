@@ -1,4 +1,4 @@
-import pocketbaseClient from "./pocketbase.js";
+import pocketbaseClient from "./db/pocketbase.js";
 import nodemailer from "nodemailer";
 
 export const sendEmailMessage = (messages) => {
