@@ -23,9 +23,15 @@ export const runEmitirNotas = async () => {
 
   for (let i = 0; i < resultList.length; i++) {
     const item = resultList[i];
+
     // await dbClient.collection("data").update(item.id, {
     //   nfseCronStatus: "",
+    //   nfseId: "",
+    //   nfseStatus: "",
+    //   nfseCronError: "",
+    //   nfseCronAttempts: 0
     // });
+
     const settings =
       notaFiscalSettings[item.event] || notaFiscalSettingsItemDefault;
     logs.push(LOG(`Nota ${i + 1} / ${resultList.length}`));
@@ -42,6 +48,7 @@ export const runEmitirNotas = async () => {
           nfseId: nfse.id,
           nfseStatus: nfse.status,
           nfseCronStatus: "PROCESSED_CRON",
+          nfseCronAttempts: 0
         });
       } else {
         logs.push(LOG(`Erro ao gerar nota para o processo: ${item.process}`));

@@ -11,9 +11,9 @@ const notafiscalHeaders = () => {
 };
 
 const postNFSe = async (item, settings) => {
-  return {
-    error: { name: 'teste' },
-  };
+  // return {
+  //   error: { name: 'teste' },
+  // };
   const body = {
     description: settings.description,
     federalServiceCode: settings.cnae,
