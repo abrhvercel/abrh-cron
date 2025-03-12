@@ -23,7 +23,7 @@ fastify.get("/", async function handler(request, reply) {
   reply.send(response);
 });
 
-fastify.listen({ port: 3001, host: "0.0.0.0" }, (err) => {
+fastify.listen({ port: 3033, host: "0.0.0.0" }, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
