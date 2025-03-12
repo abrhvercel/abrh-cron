@@ -30,8 +30,15 @@ fastify.listen({ port: 3001, host: "0.0.0.0" }, (err) => {
   }
 });
 
-// TODO DIA as 08h e 16h
-cron.schedule('0 8,16 * * *', async () =>  {
+// TODO DIA A CADA 5 MINUTOS
+cron.schedule('*/5 * * * *', async () =>  {
   const response = await runNotas();
   console.log(response)
 });
+
+
+// TODO DIA as 08h e 16h
+// cron.schedule('0 8,16 * * *', async () =>  {
+//   const response = await runNotas();
+//   console.log(response)
+// });
