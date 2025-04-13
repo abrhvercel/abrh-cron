@@ -16,7 +16,8 @@ const getLimitDate = (data) => {
 };
 
 export const getWhatsappNotifyMessage = (data) => {
-  return `
+  return `Lembrete de Pagamento - Inscrição para o Evento
+
 Prezado(a) ${data.client},
 
 Gostaríamos de lembrá-lo(a) que o status da sua inscrição para o evento ${
@@ -29,7 +30,11 @@ Detalhes da Inscrição:
   •	Nome do Evento: ${data.event}
   •	Valor da Inscrição: R$ ${data.purchaseValue}
 
-Para efetuar o pagamento, utilize o seguinte link: ${data.boleto}
+${
+  data.boleto
+    ? `Para efetuar o pagamento, utilize o seguinte link: ${data.boleto}`
+    : ""
+}
 
 Caso já tenha realizado o pagamento, desconsidere esta mensagem. Se precisar de qualquer assistência ou tiver dúvidas, não hesite em nos contatar.
 
@@ -381,6 +386,8 @@ Prezado(a) ${data.client},
 Lamentamos informar que não identificamos o pagamento de sua inscrição para o evento ${data.event} e, por isso, sua inscrição foi cancelada.
 
 Caso tenha efetuado o pagamento, envie o comprovante para o e-mail congressista@abrhbrasil.org.br para que possamos analisar e regularizar sua inscrição.
+
+Se desejar participar do evento, realize uma nova inscrição através do link ${'http://linkevento.com'}.
 
 Agradecemos à sua compreensão e estamos disponíveis para qualquer dúvida ou assistência necessária.
 
