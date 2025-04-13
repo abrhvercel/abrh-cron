@@ -23,6 +23,11 @@ fastify.get("/", async function handler(request, reply) {
   reply.send(response);
 });
 
+fastify.get("/transactions", async function handler(request, reply) {
+  const response = await checkTransactions();
+  reply.send(response);
+});
+
 fastify.listen({ port: 3001, host: "0.0.0.0" }, (err) => {
   if (err) {
     fastify.log.error(err);
