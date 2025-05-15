@@ -23,12 +23,24 @@ fastify.get("/", async function handler(request, reply) {
   reply.send(response);
 });
 
+fastify.get("/transactions", async function handler(request, reply) {
+  const response = await checkTransactions();
+  reply.send(response);
+});
+
 fastify.listen({ port: 3001, host: "0.0.0.0" }, (err) => {
   if (err) {
     fastify.log.error(err);
     process.exit(1);
   }
 });
+
+// TODO DIA A CADA 5 MINUTOS
+// cron.schedule('*/5 * * * *', async () =>  {
+//   const response = await runNotas();
+//   console.log(response)
+// });
+
 
 // TODO DIA as 08h e 16h
 cron.schedule('0 8,16 * * *', async () =>  {

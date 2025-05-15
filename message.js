@@ -16,7 +16,8 @@ const getLimitDate = (data) => {
 };
 
 export const getWhatsappNotifyMessage = (data) => {
-  return `
+  return `Lembrete de Pagamento - Inscrição para o Evento
+
 Prezado(a) ${data.client},
 
 Gostaríamos de lembrá-lo(a) que o status da sua inscrição para o evento ${
@@ -29,7 +30,11 @@ Detalhes da Inscrição:
   •	Nome do Evento: ${data.event}
   •	Valor da Inscrição: R$ ${data.purchaseValue}
 
-Para efetuar o pagamento, utilize o seguinte link: ${data.boleto}
+${
+  data.boleto
+    ? `Para efetuar o pagamento, utilize o seguinte link: ${data.boleto}`
+    : ""
+}
 
 Caso já tenha realizado o pagamento, desconsidere esta mensagem. Se precisar de qualquer assistência ou tiver dúvidas, não hesite em nos contatar.
 
@@ -42,7 +47,7 @@ ABRH Brasil
 
 export const getEmailNotifyMessage = (data) => {
   return `
-    <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <!--[if gte mso 9]>
@@ -227,11 +232,11 @@ table, td { color: #000000; } </style>
       <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <div style="font-size: 14px; line-height: 140%; text-align: left; word-wrap: break-word;">
-    <p style="line-height: 140%;">Gostaríamos de lembrá-lo(a) que o status da sua inscrição para o evento ${
+    <p style="line-height: 140%;">Gostaríamos de lembrá-lo(a) que o <b>status da sua inscrição</b> para o evento ${
       data.event
-    } se encontra pendente. Para garantir a sua participação, solicitamos que o pagamento seja realizado até ${getLimitDate(
+    } se encontra <b>pendente</b>. Para garantir a sua participação, solicitamos que o pagamento seja realizado até <b>${getLimitDate(
     data
-  )}.</p>
+  )}</b>.</p>
   </div>
 
       </td>
@@ -274,10 +279,14 @@ table, td { color: #000000; } </style>
   <tbody>
     <tr>
       <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
-        
-  <div>
-    <p>Para efetuar o pagamento, utilize o seguinte link: <a href="${data.boleto}">${data.boleto}</a></p>
-  </div>
+      
+      ${
+        data.boleto
+          ? `<div>
+    <p>Para <b>efetuar o pagamento</b>, utilize o seguinte link: <a href="${data.boleto}">${data.boleto}</a></p>
+  </div>`
+          : ""
+      }
 
       </td>
     </tr>
@@ -377,6 +386,8 @@ Prezado(a) ${data.client},
 Lamentamos informar que não identificamos o pagamento de sua inscrição para o evento ${data.event} e, por isso, sua inscrição foi cancelada.
 
 Caso tenha efetuado o pagamento, envie o comprovante para o e-mail congressista@abrhbrasil.org.br para que possamos analisar e regularizar sua inscrição.
+
+Se desejar participar do evento, realize uma nova inscrição através do link ${'http://linkevento.com'}.
 
 Agradecemos à sua compreensão e estamos disponíveis para qualquer dúvida ou assistência necessária.
 

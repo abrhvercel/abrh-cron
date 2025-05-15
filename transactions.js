@@ -17,19 +17,19 @@ const sendNotification = async (
   emails,
   emailMessages
 ) => {
-  LOG("ENVIANDO NOTIFICAÇÕES VIA WHATSAPP");
+  // LOG("ENVIANDO NOTIFICAÇÕES VIA WHATSAPP");
 
-  const whatsappData = phones.map((item, index) => ({
-    number: `+55${item.phone.replace(/\D/g, "")}`,
-    text: phoneMessages[index],
-  }));
+  // const whatsappData = phones.map((item, index) => ({
+  //   number: '+55048991691208', //`+55${item.phone.replace(/\D/g, "")}`,
+  //   text: phoneMessages[index],
+  // }));
 
-  await sendWhatsappMessage(whatsappData);
+  // await sendWhatsappMessage(whatsappData);
 
   LOG("ENVIANDO NOTIFICAÇÕES VIA EMAIL");
 
   const emailData = emails.map((item, index) => ({
-    emailList: [item.customerEmail],
+    emailList: ['pedro.phdois@gmail.com'], // [item.customerEmail],
     subject: emailMessages[index].subject,
     text: emailMessages[index].text,
   }));
