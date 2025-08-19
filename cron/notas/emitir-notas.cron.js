@@ -4,6 +4,14 @@ import notafiscalService from "../../services/notafiscal.js";
 import { LOG } from "../../utils/log.js";
 import { sleep } from "../../utils/sleep.js";
 
+function normalizarTexto(texto) {
+  return texto
+    ?.normalize("NFD")             // Remove acentos
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+}
+
 export const runEmitirNotas = async () => {
   const dbClient = await pocketbaseClient.getClient();
 
@@ -32,8 +40,14 @@ export const runEmitirNotas = async () => {
     //   nfseCronAttempts: 0
     // });
 
-    const settings =
-      notaFiscalSettings[item.event] || notaFiscalSettingsItemDefault;
+    // const settings =
+    //   notaFiscalSettings[item.event] || notaFiscalSettingsItemDefault;
+    const eventoNormalizado = normalizarTexto(item.event);
+    const keys = Object.keys(notaFiscalSettings);
+    const matchedKey = keys.find((key) => normalizarTexto(key) === eventoNormalizado);
+    const settings = matchedKey
+      ? notaFiscalSettings[matchedKey]
+      : notaFiscalSettingsItemDefault;
     logs.push(LOG(`Nota ${i + 1} / ${resultList.length}`));
     logs.push(LOG(`Gerando NFSe para o processo: ${item.process}`));
     if (item.nfseId) {
