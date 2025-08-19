@@ -36,9 +36,9 @@ fastify.listen({ port: 3001, host: "0.0.0.0" }, (err) => {
 });
 
 // TODO DIA A CADA 5 MINUTOS
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/15 * * * *', async () => {
   const response = await runNotas();
-  console.log(response)
+  console.log(response);
 });
 
 
