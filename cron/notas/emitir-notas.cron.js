@@ -50,7 +50,7 @@ export const runEmitirNotas = async () => {
       : notaFiscalSettingsItemDefault;
     logs.push(LOG(`Nota ${i + 1} / ${resultList.length}`));
     logs.push(LOG(`Gerando NFSe para o processo: ${item.process}`));
-    if (item.nfseId) {
+    if (item.nfseId || item.nfseId != "") {
       logs.push(LOG(`Nota já gerada para o processo: ${item.process}`));
     } else {
       const response = await notafiscalService.postNFSe(item, settings);
