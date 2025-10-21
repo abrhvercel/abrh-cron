@@ -37,7 +37,8 @@ const postNFSe = async (item, settings) => {
       },
     },
     total: {
-      invoiceAmount: item.purchaseValue,
+      invoiceAmount: Number(((item.purchaseValue || 0) / 100).toFixed(2)),
+      // invoiceAmount: item.purchaseValue,
     },
   };
 
